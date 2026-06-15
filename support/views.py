@@ -3,9 +3,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from accounts.permissions import IsAdminRole, IsClient
-
 from .models import Conversation
 from .serializers import ConversationCreateSerializer, ConversationSerializer
 
@@ -41,15 +39,27 @@ class ConversationListCreateView(generics.ListCreateAPIView):
             conv.save(update_fields=["assigned_agent", "status"])
 
 
-class ConversationDetailView(generics.RetrieveAPIView):
+class ConversationDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = ConversationSerializer
+
+    def get_permissions(self):
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         user = self.request.user
         qs = Conversation.objects.prefetch_related("messages__sender")
         if user.is_client:
             return qs.filter(client=user)
-        return qs
+        return qs  # admin voit toutes les conversations
+
+    def destroy(self, request, *args, **kwargs):
+        conv = self.get_object()
+        # Un client ne peut supprimer que ses propres conversations
+        if request.user.is_client and conv.client != request.user:
+            return Response({"detail": "Interdit."}, status=status.HTTP_403_FORBIDDEN)
+        # Un admin peut supprimer toutes les conversations
+        conv.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AssignConversationView(APIView):
