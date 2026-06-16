@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +15,11 @@ class NotificationListView(generics.ListAPIView):
 
 
 class MarkNotificationReadView(APIView):
+    @extend_schema(
+        request=None,
+        responses={200: NotificationSerializer},
+        description="Marquer une notification comme lue."
+    )
     def post(self, request, pk):
         try:
             notif = Notification.objects.get(pk=pk, user=request.user)

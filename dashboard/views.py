@@ -2,21 +2,50 @@ from decimal import Decimal
 
 from django.db.models import Count, Sum
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.models import User
 from accounts.permissions import IsAdminRole
 from insurance.models import InsuranceSubscription
 from microcredits.models import CreditApplication
 from repayments.models import RepaymentInstallment
 from support.models import Conversation
+from .serializers import DashboardKPISerializer
+
+
+def get_agent_choices():
+    try:
+        # Récupère dynamiquement les IDs des admins et des agents de terrain
+        ids = list(User.objects.filter(role__in=[User.Role.ADMIN, User.Role.AGENT]).values_list("id", flat=True))
+        return ids if ids else [1, 2]
+    except Exception:
+        return [1, 2]
 
 
 class DashboardKPIView(APIView):
     permission_classes = [IsAdminRole]
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter("date_from", type=OpenApiTypes.DATE, description="Date de début (YYYY-MM-DD)"),
+            OpenApiParameter("date_to", type=OpenApiTypes.DATE, description="Date de fin (YYYY-MM-DD)"),
+            OpenApiParameter(
+                "region",
+                type=OpenApiTypes.STR,
+                enum=User.Region.values,
+                description="Région du client",
+            ),
+            OpenApiParameter(
+                "agent",
+                type=OpenApiTypes.INT,
+                enum=get_agent_choices(),
+                description="ID de l'agent de terrain",
+            ),
+        ],
+        responses={200: DashboardKPISerializer},
         description="Indicateurs clés : crédits, recouvrement, assurances, support.",
     )
     def get(self, request):

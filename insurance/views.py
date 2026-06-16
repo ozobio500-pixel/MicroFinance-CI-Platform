@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +22,11 @@ class InsuranceProductListView(generics.ListAPIView):
 class InsuranceSubscribeView(APIView):
     permission_classes = [IsClient]
 
+    @extend_schema(
+        request=SubscribeSerializer,
+        responses={201: InsuranceSubscriptionSerializer},
+        description="Souscription en ligne à un produit d'assurance."
+    )
     def post(self, request):
         serializer = SubscribeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

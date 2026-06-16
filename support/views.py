@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -65,6 +66,11 @@ class ConversationDetailView(generics.RetrieveDestroyAPIView):
 class AssignConversationView(APIView):
     permission_classes = [IsAdminRole]
 
+    @extend_schema(
+        request=None,
+        responses={200: ConversationSerializer},
+        description="Assigner manuellement une conversation de support à l'agent connecté."
+    )
     def post(self, request, pk):
         try:
             conv = Conversation.objects.get(pk=pk)

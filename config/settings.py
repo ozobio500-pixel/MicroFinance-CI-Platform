@@ -112,6 +112,12 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Plateforme digitale de microcrédits, assurance mobile et support client",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "CreditApplicationStatusEnum": "microcredits.models.CreditApplication.Status",
+        "RepaymentInstallmentStatusEnum": "repayments.models.RepaymentInstallment.Status",
+        "InsuranceSubscriptionStatusEnum": "insurance.models.InsuranceSubscription.Status",
+        "ConversationStatusEnum": "support.models.Conversation.Status",
+    },
 }
 
 CHANNEL_LAYERS = {
