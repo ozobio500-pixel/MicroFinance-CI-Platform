@@ -42,6 +42,37 @@ class ConversationSerializer(serializers.ModelSerializer):
 
 
 class ConversationCreateSerializer(serializers.ModelSerializer):
+    client_username = serializers.CharField(write_only=True, required=False, allow_null=True)
+
     class Meta:
         model = Conversation
-        fields = ("subject",)
+        fields = ("subject", "client", "client_username")
+        extra_kwargs = {
+            "client": {"required": False, "allow_null": True}
+        }
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        user = request.user
+        if user.is_client:
+            attrs["client"] = user
+        else:
+            client = attrs.get("client")
+            client_username = attrs.get("client_username")
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            
+            if client_username:
+                try:
+                    client_user = User.objects.get(username=client_username, role=User.Role.CLIENT)
+                    attrs["client"] = client_user
+                except User.DoesNotExist:
+                    raise serializers.ValidationError({"client_username": f"Le client '{client_username}' n'existe pas."})
+            elif client:
+                if not client.is_client:
+                    raise serializers.ValidationError({"client": "L'utilisateur sélectionné doit être un client."})
+            else:
+                raise serializers.ValidationError({"client_username": "Un agent doit spécifier le client_username ou le client."})
+        
+        attrs.pop("client_username", None)
+        return attrs

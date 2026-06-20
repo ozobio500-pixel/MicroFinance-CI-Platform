@@ -13,8 +13,6 @@ User = get_user_model()
 
 class ConversationListCreateView(generics.ListCreateAPIView):
     def get_permissions(self):
-        if self.request.method == "POST":
-            return [IsClient()]
         return [IsAuthenticated()]
 
     def get_serializer_class(self):
@@ -32,10 +30,16 @@ class ConversationListCreateView(generics.ListCreateAPIView):
         return qs
 
     def perform_create(self, serializer):
-        conv = serializer.save(client=self.request.user)
-        agent = User.objects.filter(role=User.Role.ADMIN, is_active=True).order_by("id").first()
-        if agent:
-            conv.assigned_agent = agent
+        if self.request.user.is_client:
+            conv = serializer.save(client=self.request.user)
+            agent = User.objects.filter(role=User.Role.ADMIN, is_active=True).order_by("id").first()
+            if agent:
+                conv.assigned_agent = agent
+                conv.status = Conversation.Status.ASSIGNED
+                conv.save(update_fields=["assigned_agent", "status"])
+        else:
+            conv = serializer.save()
+            conv.assigned_agent = self.request.user
             conv.status = Conversation.Status.ASSIGNED
             conv.save(update_fields=["assigned_agent", "status"])
 

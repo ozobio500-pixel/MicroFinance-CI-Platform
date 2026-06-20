@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", RedirectView.as_view(url="/api/docs/", permanent=False)),
+    path("", TemplateView.as_view(template_name="portal.html"), name="portal-page"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

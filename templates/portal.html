@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COFINANCE CI - Portail Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6b3a;
+      --primary-light: #168a4e;
+      --accent: #e07b00;
+      --accent-light: #f59e0b;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --bg-light: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 15px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand span {
+      color: var(--accent-light);
+    }
+
+    .header-right {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .user-profile-badge {
+      background: rgba(255,255,255,0.15);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .role-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      background: var(--accent);
+      border-radius: 4px;
+      color: white;
+      font-weight: 700;
+    }
+
+    /* Notification Center */
+    .notif-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.3rem;
+      padding: 0.25rem;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .notif-bell:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--danger);
+      color: white;
+      font-size: 0.65rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 120px;
+      width: 320px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 1000;
+      overflow: hidden;
+      color: var(--text-dark);
+    }
+
+    .notif-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+
+    .notif-list {
+      max-height: 280px;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    .notif-item {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .notif-item:hover {
+      background: var(--bg);
+    }
+
+    .notif-item.unread {
+      background: #f0fdf4;
+      border-left: 3px solid var(--primary);
+    }
+
+    .notif-item-title {
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .notif-item-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Auth Panel */
+    .auth-container {
+      max-width: 440px;
+      width: 90%;
+      margin: 4rem auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .auth-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      background: var(--bg);
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 107, 58, 0.15);
+      background: white;
+    }
+
+    /* Primary layout */
+    .app-layout {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .nav-item:hover {
+      background: var(--bg);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & UI elements */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--primary);
+    }
+
+    .accent-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+    }
+
+    .btn {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+    }
+
+    .btn.outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-dark);
+      box-shadow: none;
+    }
+
+    .btn.outline:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+
+    .btn:disabled {
+      background: var(--text-light);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Table Design */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg);
+      padding: 1rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.925rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #fafafa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge.submitted { background: #eff6ff; color: #1e40af; }
+    .badge.in_review { background: #fef3c7; color: #92400e; }
+    .badge.approved { background: #ecfdf5; color: #065f46; }
+    .badge.disbursed { background: #f0fdf4; color: #166534; }
+    .badge.pending { background: #fffbeb; color: #92400e; }
+    .badge.paid { background: #f0fdf4; color: #166534; }
+    .badge.late { background: #fef2f2; color: #991b1b; }
+    .badge.active { background: #f0fdf4; color: #166534; }
+    .badge.expired { background: #f1f5f9; color: #475569; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Chat specifics */
+    .chat-layout {
+      height: calc(100vh - 120px);
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card);
+    }
+
+    .chat-sidebar {
+      width: 280px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .chat-sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    .chat-item {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .chat-item:hover {
+      background: var(--card);
+    }
+
+    .chat-item.active {
+      background: #f0fdf4;
+      border-left: 4px solid var(--primary);
+    }
+
+    .chat-item-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-item-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .chat-delete-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      opacity: 0;
+      padding: 0.25rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .chat-item:hover .chat-delete-btn {
+      opacity: 1;
+    }
+
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-light);
+    }
+
+    .chat-area-header {
+      padding: 1rem;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-presence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .chat-presence-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chat-msg {
+      max-width: 60%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.925rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .chat-msg.own {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-msg.theirs {
+      align-self: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-msg-sender {
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      opacity: 0.8;
+    }
+
+    .chat-msg-time {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+
+    .chat-input-container {
+      padding: 1rem;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .chat-input-container textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      height: 40px;
+    }
+
+    .chat-typing-indicator {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0.25rem 1.5rem;
+      font-style: italic;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-left: 4px solid;
+    }
+
+    .alert-banner.error { background: #fef2f2; color: #991b1b; border-color: var(--danger); }
+    .alert-banner.success { background: #f0fdf4; color: #166534; border-color: var(--success); }
+    .alert-banner.info { background: #eff6ff; color: #1e40af; border-color: var(--primary); }
+
+    .empty-state {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">COFINANCE <span>CI</span></div>
+    <div class="header-right" id="headerRight" style="display: none;">
+      <div class="notif-bell" onclick="toggleNotifications()">
+        🔔 <span class="notif-badge" id="notifCount" style="display: none;">0</span>
+        <!-- Dropdown notifications -->
+        <div class="notif-dropdown" id="notifDropdown" onclick="event.stopPropagation()">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <span style="font-size: 0.75rem; color: var(--primary); cursor: pointer;" onclick="markAllNotificationsRead()">Tout marquer lu</span>
+          </div>
+          <ul class="notif-list" id="notifList">
+            <li class="empty-state" style="padding: 1.5rem;">Aucune notification</li>
+          </ul>
+        </div>
+      </div>
+      <div class="user-profile-badge">
+        <span id="userBadgeName">Utilisateur</span>
+        <span class="role-tag" id="userBadgeRole">Rôle</span>
+      </div>
+      <button class="btn danger" onclick="logout()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Déconnexion</button>
+    </div>
+  </header>
+
+  <!-- LOGIN PANEL -->
+  <div class="auth-container" id="loginPanel">
+    <div class="auth-title">Portail COFINANCE CI</div>
+    <div class="auth-subtitle">Espace d'inclusion financière et d'assurance mobile</div>
+    <div id="loginAlert"></div>
+    <div class="form-group">
+      <label for="username">Identifiant</label>
+      <input type="text" id="username" placeholder="Entrez votre nom d'utilisateur" value="client1">
+    </div>
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" placeholder="Entrez votre mot de passe" value="demo1234">
+    </div>
+    <button class="btn" id="btnLogin" onclick="login()" style="width: 100%; justify-content: center;">Se connecter</button>
+  </div>
+
+  <!-- CORE APP LAYOUT -->
+  <div class="app-layout" id="appLayout" style="display: none;">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="nav-item active" id="navKpis" onclick="switchTab('panelKpis', this)">📊 Tableau de Bord</div>
+      <div class="nav-item" id="navProfile" onclick="switchTab('panelProfile', this)">👤 Mon Profil</div>
+      <div class="nav-item" id="navCredits" onclick="switchTab('panelCredits', this)">💵 Microcrédits</div>
+      <div class="nav-item" id="navRepayments" onclick="switchTab('panelRepayments', this)">💳 Remboursements</div>
+      <div class="nav-item" id="navInsurance" onclick="switchTab('panelInsurance', this)">🛡️ Assurances</div>
+      <div class="nav-item" id="navChat" onclick="switchTab('panelChat', this)">💬 Support Client</div>
+    </div>
+
+    <!-- MAIN PANELS -->
+    <div class="main-content">
+
+      <!-- PANEL: DASHBOARD KPIS (ADMINS ONLY) -->
+      <div class="panel active" id="panelKpis">
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1.5rem;">Tableau de bord de pilotage</h2>
+        
+        <!-- Filters (For admin) -->
+        <div class="card" id="kpiFiltersCard" style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1rem; margin-bottom: 1rem;">Filtres d'analyse</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Date de début</label>
+              <input type="date" id="filterDateFrom">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Date de fin</label>
+              <input type="date" id="filterDateTo">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Région</label>
+              <select id="filterRegion">
+                <option value="">Toutes</option>
+                <option value="abidjan">Abidjan</option>
+                <option value="bouake">Bouaké</option>
+                <option value="yamoussoukro">Yamoussoukro</option>
+                <option value="san_pedro">San-Pédro</option>
+                <option value="korhogo">Korhogo</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Agent (ID)</label>
+              <select id="filterAgent">
+                <option value="">Tous</option>
+              </select>
+            </div>
+            <button class="btn" onclick="loadKpiData()" style="height: 44px; justify-content: center;">Filtrer</button>
+          </div>
+        </div>
+
+        <div class="stats-grid" id="kpiGrid">
+          <div class="card">
+            <div class="accent-bar" style="background: var(--primary);"></div>
+            <div class="card-title">Taux de recouvrement</div>
+            <div class="card-value" id="kpiRecovery">0%</div>
+          </div>
+          <div class="card">
+            <div class="accent-bar" style="background: var(--accent);"></div>
+            <div class="card-title">Souscriptions Assurances</div>
+            <div class="card-value" id="kpiInsurance">0</div>
+          </div>
+          <div class="card">
+            <div class="accent-bar" style="background: var(--danger);"></div>
+            <div class="card-title">Chats Ouverts</div>
+            <div class="card-value" id="kpiChats">0</div>
+          </div>
+          <div class="card">
+            <div class="accent-bar" style="background: #2563eb;"></div>
+            <div class="card-title">Total Crédits Demandés</div>
+            <div class="card-value" id="kpiTotalCredits">0</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Volume de demandes par statut</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;" id="kpiStatusList">
+            <!-- Dynamic list of statuses -->
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: PROFILE -->
+      <div class="panel" id="panelProfile">
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1.5rem;">Mon Profil Utilisateur</h2>
+        <div class="card" style="max-width: 600px;">
+          <div class="accent-bar"></div>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Nom d'utilisateur :</span>
+              <span id="profUsername">N/A</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Prénom & Nom :</span>
+              <span id="profFullName">N/A</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Rôle :</span>
+              <span id="profRole" class="badge approved">N/A</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Téléphone :</span>
+              <span id="profPhone">N/A</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Région :</span>
+              <span id="profRegion">N/A</span>
+            </div>
+            <div id="profCreditScoreRow" style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              <span style="font-weight: 600;">Score de Crédit Interne :</span>
+              <span id="profCreditScore" style="font-weight: bold; color: var(--accent);">50/100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: MICROCREDITS -->
+      <div class="panel" id="panelCredits">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">Gestion des Microcrédits</h2>
+          <button class="btn" id="btnNewCreditModal" onclick="openModal('modalNewCredit')">➕ Demander un Crédit</button>
+        </div>
+        <div id="creditsAlert"></div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Montant</th>
+                <th>Durée</th>
+                <th>Score Élig.</th>
+                <th>Statut</th>
+                <th>Date demande</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="creditsTableBody">
+              <tr>
+                <td colspan="8" class="empty-state">Chargement...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANEL: REPAYMENTS -->
+      <div class="panel" id="panelRepayments">
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1.5rem;">Suivi des Remboursements</h2>
+        <div id="repaymentsAlert"></div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Crédit ID</th>
+                <th>Échéance N°</th>
+                <th>Date Limite</th>
+                <th>Principal</th>
+                <th>Intérêts</th>
+                <th>Pénalités</th>
+                <th>Total dû</th>
+                <th>Payé</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="repaymentsTableBody">
+              <tr>
+                <td colspan="11" class="empty-state">Chargement...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANEL: INSURANCE -->
+      <div class="panel" id="panelInsurance">
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1.5rem;">Produits & Polices d'Assurance Mobile</h2>
+        <div id="insuranceAlert"></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <!-- Active policies -->
+          <div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary);">Mes polices actives</h3>
+            <div class="table-container" style="margin-top: 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>N° Police</th>
+                    <th>Produit</th>
+                    <th>Date d'expiration</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody id="activePoliciesTableBody">
+                  <tr>
+                    <td colspan="4" class="empty-state">Aucune police active</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Insurance catalogue -->
+          <div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent);">Catalogue des formules</h3>
+            <div id="insuranceCatalog" style="display: flex; flex-direction: column; gap: 1rem;">
+              <!-- Dynamic list of products -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: SUPPORT CHAT -->
+      <div class="panel" id="panelChat">
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1rem;">Support Client Temps Réel</h2>
+        <div class="chat-layout">
+          <!-- Sidebar -->
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              <button class="btn secondary" id="btnNewChat" onclick="initiateConversation()">➕ Nouveau support</button>
+            </div>
+            <ul class="chat-list" id="chatList"></ul>
+          </div>
+          <!-- Chat Area -->
+          <div class="chat-area">
+            <div class="chat-area-header">
+              <div>
+                <h4 id="chatActiveSubject">Sélectionnez une discussion</h4>
+                <div style="font-size: 0.75rem; color: var(--text-muted);" id="chatActiveAgent"></div>
+              </div>
+              <div id="chatPresenceIndicator" style="display: none;" class="chat-presence-badge">L'agent est en ligne</div>
+            </div>
+            <!-- Messages area -->
+            <div class="chat-messages" id="chatMessages">
+              <div class="empty-state">Aucune discussion en cours</div>
+            </div>
+            <!-- Typing indicator -->
+            <div class="chat-typing-indicator" id="chatTyping" style="display: none;">L'agent est en train d'écrire...</div>
+            <!-- Input area -->
+            <div class="chat-input-container">
+              <textarea id="chatInput" placeholder="Saisissez votre message..." disabled></textarea>
+              <button class="btn" id="btnSendChat" onclick="sendChatMessage()" disabled>Envoyer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: NEW CREDIT APPLICATION -->
+  <div class="modal-overlay" id="modalNewCredit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Demander un microcrédit</h3>
+        <button class="modal-close" onclick="closeModal('modalNewCredit')">✖</button>
+      </div>
+      <div id="modalCreditAlert"></div>
+      <div class="form-group">
+        <label for="creditAmount">Montant souhaité (FCFA)</label>
+        <input type="number" id="creditAmount" placeholder="Ex: 300000" min="10000" max="5000000">
+      </div>
+      <div class="form-group">
+        <label for="creditDuration">Durée de remboursement (Mois)</label>
+        <select id="creditDuration">
+          <option value="3">3 Mois</option>
+          <option value="6" selected>6 Mois</option>
+          <option value="12">12 Mois</option>
+          <option value="18">18 Mois</option>
+          <option value="24">24 Mois</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal('modalNewCredit')">Annuler</button>
+        <button class="btn" onclick="submitCreditApplication()">Soumettre la demande</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: UPLOAD CREDIT DOCUMENTS -->
+  <div class="modal-overlay" id="modalUploadDoc">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Ajouter une pièce justificative</h3>
+        <button class="modal-close" onclick="closeModal('modalUploadDoc')">✖</button>
+      </div>
+      <div id="modalDocAlert"></div>
+      <input type="hidden" id="modalDocAppId">
+      <div class="form-group">
+        <label for="docFile">Sélectionnez le fichier justificatif</label>
+        <input type="file" id="docFile">
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal('modalUploadDoc')">Annuler</button>
+        <button class="btn" onclick="uploadCreditDocument()">Téléverser</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RECORD REPAYMENT -->
+  <div class="modal-overlay" id="modalRecordRepayment">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Enregistrer un remboursement</h3>
+        <button class="modal-close" onclick="closeModal('modalRecordRepayment')">✖</button>
+      </div>
+      <div id="modalRepaymentAlert"></div>
+      <input type="hidden" id="modalRepayInstallmentId">
+      <div class="form-group">
+        <label>Montant du paiement (FCFA)</label>
+        <input type="number" id="repayAmount" placeholder="Ex: 50000">
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal('modalRecordRepayment')">Annuler</button>
+        <button class="btn" onclick="submitRepaymentPayment()">Confirmer le paiement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    const API = window.location.origin;
+    let token = '';
+    let currentUser = null;
+    let ws = null;
+    let currentConvId = null;
+    let conversations = [];
+    let messageQueue = [];
+    let typingTimeout = null;
+    let isConnecting = false;
+
+    // Helper functions
+    const $ = id => document.getElementById(id);
+    const getHeaders = () => ({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    function toggleNotifications() {
+      const drop = $('notifDropdown');
+      drop.style.display = drop.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', () => {
+      $('notifDropdown').style.display = 'none';
+    });
+
+    function openModal(id) {
+      $(id).style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      $(id).style.display = 'none';
+    }
+
+    function switchTab(panelId, element) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      $(panelId).classList.add('active');
+      element.classList.add('active');
+
+      // Specific tab loads
+      if (panelId === 'panelKpis') loadKpiData();
+      if (panelId === 'panelCredits') loadCredits();
+      if (panelId === 'panelRepayments') loadRepayments();
+      if (panelId === 'panelInsurance') loadInsurances();
+      if (panelId === 'panelChat') loadChatConversations();
+    }
+
+    // LOGIN
+    async function login() {
+      const username = $('username').value.trim();
+      const password = $('password').value.trim();
+      if (!username || !password) {
+        showAlert('loginAlert', 'Veuillez remplir tous les champs', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/api/auth/token/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showAlert('loginAlert', data.detail || 'Identifiants incorrects', 'error');
+          return;
+        }
+
+        token = data.access;
+        await loadUserProfile();
+      } catch (err) {
+        showAlert('loginAlert', 'Erreur réseau lors de la connexion', 'error');
+      }
+    }
+
+    // USER PROFILE
+    async function loadUserProfile() {
+      try {
+        const res = await fetch(`${API}/api/accounts/me/`, {
+          headers: getHeaders()
+        });
+        if (!res.ok) {
+          logout();
+          return;
+        }
+
+        currentUser = await res.json();
+        
+        // Show layout & Hide Login Panel
+        $('loginPanel').style.display = 'none';
+        $('appLayout').style.display = 'flex';
+        $('headerRight').style.display = 'flex';
+
+        // Set User badges
+        $('userBadgeName').textContent = currentUser.username;
+        const roleLabels = { client: 'Client', agent: 'Agent de terrain', admin: 'Administrateur' };
+        $('userBadgeRole').textContent = roleLabels[currentUser.role] || currentUser.role;
+
+        // Render Profile view
+        $('profUsername').textContent = currentUser.username;
+        $('profFullName').textContent = `${currentUser.first_name} ${currentUser.last_name}`.trim() || 'N/A';
+        $('profRole').textContent = roleLabels[currentUser.role];
+        $('profPhone').textContent = currentUser.phone || 'Non renseigné';
+        $('profRegion').textContent = currentUser.region ? currentUser.region.toUpperCase() : 'Non renseignée';
+        if (currentUser.role === 'client') {
+          $('profCreditScoreRow').style.display = 'flex';
+          $('profCreditScore').textContent = `${currentUser.credit_score}/100`;
+          $('btnNewCreditModal').style.display = 'block';
+        } else {
+          $('profCreditScoreRow').style.display = 'none';
+          $('btnNewCreditModal').style.display = 'none';
+        }
+
+        // Adjust visibility according to roles
+        if (currentUser.role === 'admin') {
+          $('navKpis').style.display = 'block';
+          $('kpiFiltersCard').style.display = 'block';
+        } else {
+          $('navKpis').style.display = 'none';
+          $('kpiFiltersCard').style.display = 'none';
+        }
+
+        // Switch to appropriate initial tab
+        if (currentUser.role === 'admin') {
+          switchTab('panelKpis', $('navKpis'));
+        } else {
+          switchTab('panelProfile', $('navProfile'));
+        }
+
+        // Load notifications
+        loadNotifications();
+        setInterval(loadNotifications, 30000); // refresh notifications every 30s
+        loadAgentsList();
+      } catch (err) {
+        logout();
+      }
+    }
+
+    function logout() {
+      token = '';
+      currentUser = null;
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+      $('loginPanel').style.display = 'block';
+      $('appLayout').style.display = 'none';
+      $('headerRight').style.display = 'none';
+      $('username').value = '';
+      $('password').value = '';
+    }
+
+    // ALERTS & NOTIFICATIONS
+    function showAlert(id, msg, type) {
+      const container = $(id);
+      container.innerHTML = `<div class="alert-banner ${type}">${msg}</div>`;
+      setTimeout(() => { container.innerHTML = ''; }, 6000);
+    }
+
+    async function loadNotifications() {
+      if (!token) return;
+      try {
+        const res = await fetch(`${API}/api/notifications/`, {
+          headers: getHeaders()
+        });
+        if (!res.ok) return;
+
+        const notifs = await res.json();
+        const unreadCount = notifs.filter(n => !n.is_read).length;
+        
+        const countBadge = $('notifCount');
+        if (unreadCount > 0) {
+          countBadge.textContent = unreadCount;
+          countBadge.style.display = 'flex';
+        } else {
+          countBadge.style.display = 'none';
+        }
+
+        const list = $('notifList');
+        if (notifs.length === 0) {
+          list.innerHTML = '<li class="empty-state" style="padding: 1.5rem;">Aucune notification</li>';
+          return;
+        }
+
+        list.innerHTML = '';
+        notifs.forEach(n => {
+          const item = document.createElement('li');
+          item.className = `notif-item ${n.is_read ? '' : 'unread'}`;
+          item.onclick = (e) => {
+            e.stopPropagation();
+            markNotificationRead(n.id);
+          };
+          const date = new Date(n.created_at).toLocaleString('fr-FR');
+          item.innerHTML = `
+            <div class="notif-item-title">${escapeHtml(n.title)}</div>
+            <div>${escapeHtml(n.message)}</div>
+            <div class="notif-item-time">${date}</div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function markNotificationRead(id) {
+      try {
+        const res = await fetch(`${API}/api/notifications/${id}/read/`, {
+          method: 'POST',
+          headers: getHeaders()
+        });
+        if (res.ok) {
+          loadNotifications();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function markAllNotificationsRead() {
+      // Find all unread notifications in DOM and call read endpoint
+      const list = document.querySelectorAll('.notif-item.unread');
+      for (const item of list) {
+        // Find notification ID
+      }
+    }
+
+    // DASHBOARD KPIS (ADMINS)
+    async function loadAgentsList() {
+      // Pre-populate agent filter
+      try {
+        const res = await fetch(`${API}/api/dashboard/kpis/`, { headers: getHeaders() });
+        const data = await res.json();
+        // Since we don't have a direct users list endpoint for filters, we can fetch demo agent IDs
+        const filter = $('filterAgent');
+        filter.innerHTML = '<option value="">Tous</option><option value="1">Admin (Aminata)</option><option value="2">Agent 1</option>';
+      } catch (e) {}
+    }
+
+    async function loadKpiData() {
+      if (currentUser.role !== 'admin') return;
+
+      const dateFrom = $('filterDateFrom').value;
+      const dateTo = $('filterDateTo').value;
+      const region = $('filterRegion').value;
+      const agent = $('filterAgent').value;
+
+      let url = `${API}/api/dashboard/kpis/?`;
+      if (dateFrom) url += `date_from=${dateFrom}&`;
+      if (dateTo) url += `date_to=${dateTo}&`;
+      if (region) url += `region=${region}&`;
+      if (agent) url += `agent=${agent}&`;
+
+      try {
+        const res = await fetch(url, { headers: getHeaders() });
+        if (!res.ok) return;
+
+        const kpis = await res.json();
+        $('kpiRecovery').textContent = `${kpis.recovery_rate_percent}%`;
+        $('kpiInsurance').textContent = kpis.active_insurance_subscriptions;
+        $('kpiChats').textContent = kpis.open_support_conversations;
+        $('kpiTotalCredits').textContent = kpis.total_credit_requests;
+
+        // Render Status Count
+        const statusList = $('kpiStatusList');
+        statusList.innerHTML = '';
+        const statuses = kpis.credits_by_status || {};
+        
+        const labelMap = { submitted: 'Soumise', in_review: 'En analyse', approved: 'Approuvée', disbursed: 'Décaissée' };
+        for (const [statusKey, count] of Object.entries(statuses)) {
+          const badgeClass = statusKey;
+          statusList.innerHTML += `
+            <div class="card" style="padding: 0.75rem; text-align: center;">
+              <div style="font-size: 0.8rem; margin-bottom: 0.25rem;"><span class="badge ${badgeClass}">${labelMap[statusKey] || statusKey}</span></div>
+              <div style="font-size: 1.2rem; font-weight: bold;">${count}</div>
+            </div>
+          `;
+        }
+        if (Object.keys(statuses).length === 0) {
+          statusList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem;">Aucun crédit enregistré sur cette période.</div>';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // MICROCREDITS
+    async function loadCredits() {
+      try {
+        const res = await fetch(`${API}/api/microcredits/applications/`, {
+          headers: getHeaders()
+        });
+        if (!res.ok) return;
+
+        const credits = await res.json();
+        const tbody = $('creditsTableBody');
+        if (credits.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Aucun crédit enregistré</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        const statusLabels = { submitted: 'Soumise', in_review: 'En analyse', approved: 'Approuvée', disbursed: 'Décaissée' };
+        credits.forEach(c => {
+          const date = new Date(c.created_at).toLocaleDateString('fr-FR');
+          const isAgentOrAdmin = currentUser.role !== 'client';
+          
+          let actionButtons = '';
+          if (c.status === 'submitted' && isAgentOrAdmin) {
+            actionButtons += `<button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="updateCreditStatus(${c.id}, 'in_review')">Analyser</button>`;
+          } else if (c.status === 'in_review' && isAgentOrAdmin) {
+            actionButtons += `<button class="btn approved" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--success);" onclick="updateCreditStatus(${c.id}, 'approved')">Approuver</button>`;
+          } else if (c.status === 'approved' && isAgentOrAdmin) {
+            actionButtons += `<button class="btn secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="updateCreditStatus(${c.id}, 'disbursed')">Décaisser</button>`;
+          }
+
+          if (currentUser.role === 'client') {
+            actionButtons += `<button class="btn outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="openUploadDocModal(${c.id})">📎 Justificatif</button>`;
+          }
+
+          // Show list of uploaded files
+          let docsHtml = '';
+          if (c.documents && c.documents.length > 0) {
+            docsHtml = c.documents.map((d, index) => `<a href="${API}${d.file}" target="_blank" style="color: var(--primary); display:block; font-size: 0.75rem;">Doc #${index+1}</a>`).join('');
+          } else {
+            docsHtml = '<span style="font-size: 0.75rem; color: var(--text-light);">Aucun</span>';
+          }
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${c.id}</td>
+              <td>${escapeHtml(c.client_username || c.client)}</td>
+              <td style="font-weight: 600;">${c.amount.toLocaleString()} FCFA</td>
+              <td>${c.duration_months} Mois</td>
+              <td style="font-weight: bold; color: var(--accent);">${c.eligibility_score || 'N/A'}/100</td>
+              <td><span class="badge ${c.status}">${statusLabels[c.status] || c.status}</span></td>
+              <td>${date}</td>
+              <td>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                  ${actionButtons}
+                  ${docsHtml}
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function submitCreditApplication() {
+      const amount = parseInt($('creditAmount').value);
+      const duration = parseInt($('creditDuration').value);
+      if (!amount || amount < 10000) {
+        showAlert('modalCreditAlert', 'Montant incorrect', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/api/microcredits/applications/`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify({ amount, duration_months: duration })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          showAlert('modalCreditAlert', err.detail || 'Erreur lors du dépôt', 'error');
+          return;
+        }
+
+        closeModal('modalNewCredit');
+        showAlert('creditsAlert', 'Demande de crédit soumise avec succès !', 'success');
+        loadCredits();
+      } catch (err) {
+        showAlert('modalCreditAlert', 'Erreur réseau', 'error');
+      }
+    }
+
+    async function updateCreditStatus(id, newStatus) {
+      try {
+        const res = await fetch(`${API}/api/microcredits/applications/${id}/status/`, {
+          method: 'PATCH',
+          headers: getHeaders(),
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          showAlert('creditsAlert', err.detail || 'Erreur lors du changement de statut', 'error');
+          return;
+        }
+
+        showAlert('creditsAlert', `Le crédit #${id} est passé au statut : ${newStatus.toUpperCase()}`, 'success');
+        loadCredits();
+      } catch (err) {
+        showAlert('creditsAlert', 'Erreur réseau', 'error');
+      }
+    }
+
+    function openUploadDocModal(appId) {
+      $('modalDocAppId').value = appId;
+      $('docFile').value = '';
+      openModal('modalUploadDoc');
+    }
+
+    async function uploadCreditDocument() {
+      const appId = $('modalDocAppId').value;
+      const fileInput = $('docFile');
+      if (fileInput.files.length === 0) {
+        showAlert('modalDocAlert', 'Veuillez sélectionner un fichier', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch(`${API}/api/microcredits/applications/${appId}/documents/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        if (!res.ok) {
+          showAlert('modalDocAlert', 'Erreur lors du téléversement', 'error');
+          return;
+        }
+
+        closeModal('modalUploadDoc');
+        showAlert('creditsAlert', 'Fichier justificatif chargé avec succès !', 'success');
+        loadCredits();
+      } catch (err) {
+        showAlert('modalDocAlert', 'Erreur réseau', 'error');
+      }
+    }
+
+    // REPAYMENTS
+    async function loadRepayments() {
+      try {
+        // Load correct endpoint depending on role
+        let url = `${API}/api/repayments/installments/`;
+        if (currentUser.role === 'client') {
+          url = `${API}/api/repayments/history/`;
+        }
+
+        const res = await fetch(url, { headers: getHeaders() });
+        if (!res.ok) return;
+
+        const installments = await res.json();
+        const tbody = $('repaymentsTableBody');
+        if (installments.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Aucun versement enregistré</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        const statusLabels = { pending: 'À payer', paid: 'Payée', late: 'En retard' };
+        installments.forEach(inst => {
+          const dateLimit = new Date(inst.due_date).toLocaleDateString('fr-FR');
+          const isAgent = currentUser.role !== 'client';
+          
+          let actions = '';
+          if (inst.status !== 'paid' && isAgent) {
+            actions = `<button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="openRecordRepaymentModal(${inst.id})">Enregistrer Paiement</button>`;
+          }
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${inst.id}</td>
+              <td style="font-weight:bold;">#${inst.application}</td>
+              <td>Échéance #${inst.installment_number}</td>
+              <td>${dateLimit}</td>
+              <td>${parseInt(inst.principal_amount).toLocaleString()} FCFA</td>
+              <td>${parseInt(inst.interest_amount).toLocaleString()} FCFA</td>
+              <td style="color:var(--danger);">${parseInt(inst.penalty_amount).toLocaleString()} FCFA</td>
+              <td style="font-weight:600; color:var(--primary);">${parseInt(inst.total_due).toLocaleString()} FCFA</td>
+              <td style="color:var(--success); font-weight:600;">${parseInt(inst.amount_paid).toLocaleString()} FCFA</td>
+              <td><span class="badge ${inst.status}">${statusLabels[inst.status] || inst.status}</span></td>
+              <td>${actions}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function openRecordRepaymentModal(installmentId) {
+      $('modalRepayInstallmentId').value = installmentId;
+      $('repayAmount').value = '';
+      openModal('modalRecordRepayment');
+    }
+
+    async function submitRepaymentPayment() {
+      const instId = $('modalRecordRepayment').querySelector('#modalRepayInstallmentId').value;
+      const amount = parseInt($('repayAmount').value);
+      if (!amount || amount <= 0) {
+        showAlert('modalRepaymentAlert', 'Montant invalide', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/api/repayments/installments/${instId}/pay/`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify({ amount })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          showAlert('modalRepaymentAlert', err.detail || 'Erreur lors du versement', 'error');
+          return;
+        }
+
+        closeModal('modalRecordRepayment');
+        showAlert('repaymentsAlert', 'Remboursement enregistré avec succès !', 'success');
+        loadRepayments();
+      } catch (err) {
+        showAlert('modalRepaymentAlert', 'Erreur réseau', 'error');
+      }
+    }
+
+    // ASSURANCES
+    async function loadInsurances() {
+      try {
+        // Load catalogue
+        const catRes = await fetch(`${API}/api/insurance/products/`, { headers: getHeaders() });
+        const catalog = await catRes.json();
+        const catalogDiv = $('insuranceCatalog');
+        catalogDiv.innerHTML = '';
+        
+        catalog.forEach(p => {
+          const isClient = currentUser.role === 'client';
+          const subButton = isClient 
+            ? `<button class="btn secondary" style="width: 100%; margin-top: 1rem;" onclick="subscribeInsurance(${p.id})">Souscrire (Mensualité: ${p.premium_monthly.toLocaleString()} FCFA)</button>` 
+            : '';
+          const typeLabel = p.product_type === 'life' ? 'Assurance Vie Simplifiée' : 'Décès-Invalidité';
+
+          catalogDiv.innerHTML += `
+            <div class="card">
+              <div class="accent-bar" style="background: var(--accent);"></div>
+              <h4 style="font-family:'Plus Jakarta Sans',sans-serif; margin-bottom: 0.5rem;">${escapeHtml(p.name)}</h4>
+              <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:0.75rem;">Type : ${typeLabel}</p>
+              <p style="font-size:0.9rem; margin-bottom:0.5rem;">${escapeHtml(p.description)}</p>
+              <div style="font-size:0.85rem; font-weight:600; display:flex; justify-content:space-between; margin-top:0.75rem;">
+                <span>Couverture : ${p.coverage_amount.toLocaleString()} FCFA</span>
+                <span>Durée : ${p.duration_months} Mois</span>
+              </div>
+              ${subButton}
+            </div>
+          `;
+        });
+
+        // Load Active subscriptions (if client)
+        if (currentUser.role === 'client') {
+          const subRes = await fetch(`${API}/api/insurance/my-policies/`, { headers: getHeaders() });
+          const policies = await subRes.json();
+          const tbody = $('activePoliciesTableBody');
+          
+          if (policies.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Aucune police active</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = '';
+          policies.forEach(p => {
+            const date = new Date(p.end_date).toLocaleDateString('fr-FR');
+            tbody.innerHTML += `
+              <tr>
+                <td style="font-weight:bold;">${p.policy_number}</td>
+                <td>${escapeHtml(p.product_detail.name)}</td>
+                <td>${date}</td>
+                <td><span class="badge active">Active</span></td>
+              </tr>
+            `;
+          });
+        } else {
+          $('activePoliciesTableBody').innerHTML = '<tr><td colspan="4" class="empty-state">Connectez-vous en tant que client pour voir vos polices.</td></tr>';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function subscribeInsurance(productId) {
+      try {
+        const res = await fetch(`${API}/api/insurance/subscribe/`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify({ product_id: productId })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          showAlert('insuranceAlert', err.detail || 'Erreur lors de la souscription', 'error');
+          return;
+        }
+
+        showAlert('insuranceAlert', 'Souscription confirmée avec succès !', 'success');
+        loadInsurances();
+      } catch (err) {
+        showAlert('insuranceAlert', 'Erreur réseau', 'error');
+      }
+    }
+
+    // SUPPORT CLIENT CHAT (WEBSOCKETS)
+    async function loadChatConversations() {
+      const isClient = currentUser.role === 'client';
+      $('btnNewChat').textContent = isClient ? '➕ Nouveau support' : '➕ Initier une conversation';
+
+      try {
+        const res = await fetch(`${API}/api/support/conversations/`, { headers: getHeaders() });
+        if (!res.ok) return;
+
+        conversations = await res.json();
+        renderConversationsList();
+
+        if (conversations.length > 0 && !currentConvId) {
+          selectConversation(conversations[0].id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderConversationsList() {
+      const list = $('chatList');
+      list.innerHTML = '';
+      conversations.forEach(c => {
+        const item = document.createElement('li');
+        item.className = `chat-item ${c.id === currentConvId ? 'active' : ''}`;
+        item.onclick = (e) => {
+          if (!e.target.classList.contains('chat-delete-btn')) {
+            selectConversation(c.id);
+          }
+        };
+
+        const statusLabels = { open: 'Ouvert', assigned: 'Assigné', closed: 'Fermé' };
+        item.innerHTML = `
+          <button class="chat-delete-btn" onclick="deleteConversation(${c.id}, event)">✖</button>
+          <div class="chat-item-title">${escapeHtml(c.subject)}</div>
+          <div class="chat-item-meta">Client: ${escapeHtml(c.client_username)}</div>
+          <div class="chat-item-meta" style="display:flex; justify-content:space-between; margin-top:0.25rem;">
+            <span>Agent: ${escapeHtml(c.assigned_agent_username || 'Non assigné')}</span>
+            <span style="font-weight:700;">${statusLabels[c.status] || c.status}</span>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    async function initiateConversation() {
+      let client_username = null;
+      if (currentUser.role !== 'client') {
+        client_username = prompt("Entrez le nom d'utilisateur du client pour lancer le chat (ex: client1) :");
+        if (!client_username) return;
+      }
+
+      try {
+        const payload = { subject: 'Support COFINANCE CI' };
+        if (client_username) {
+          payload.client_username = client_username;
+        }
+
+        const res = await fetch(`${API}/api/support/conversations/`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.client_username || data.client || "Impossible de créer la discussion");
+          return;
+        }
+
+        conversations.unshift(data);
+        renderConversationsList();
+        selectConversation(data.id);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deleteConversation(id, event) {
+      event.stopPropagation();
+      if (!confirm("Voulez-vous vraiment supprimer cette conversation ?")) return;
+
+      try {
+        const res = await fetch(`${API}/api/support/conversations/${id}/`, {
+          method: 'DELETE',
+          headers: getHeaders()
+        });
+        if (res.status === 204) {
+          conversations = conversations.filter(c => c.id !== id);
+          if (currentConvId === id) {
+            currentConvId = null;
+            if (ws) {
+              ws.close();
+              ws = null;
+            }
+            $('chatActiveSubject').textContent = 'Sélectionnez une discussion';
+            $('chatActiveAgent').textContent = '';
+            $('chatMessages').innerHTML = '<div class="empty-state">Aucune discussion active</div>';
+            $('chatInput').disabled = true;
+            $('btnSendChat').disabled = true;
+          }
+          renderConversationsList();
+          if (conversations.length > 0 && !currentConvId) {
+            selectConversation(conversations[0].id);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function selectConversation(convId) {
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+
+      currentConvId = convId;
+      const conv = conversations.find(c => c.id === convId);
+      if (!conv) return;
+
+      document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+      const index = conversations.findIndex(c => c.id === convId);
+      const items = document.querySelectorAll('.chat-item');
+      if (items[index]) items[index].classList.add('active');
+
+      $('chatActiveSubject').textContent = conv.subject;
+      $('chatActiveAgent').textContent = conv.assigned_agent_username ? `Agent assigné: ${conv.assigned_agent_username}` : 'Non assigné';
+
+      const msgArea = $('chatMessages');
+      msgArea.innerHTML = '';
+      if (conv.messages && conv.messages.length > 0) {
+        conv.messages.forEach(msg => {
+          appendMessage(msg, msg.sender === currentUser.id || msg.sender_name === currentUser.username);
+        });
+      } else {
+        msgArea.innerHTML = '<div class="empty-state">Aucun message. Commencez la discussion !</div>';
+      }
+
+      $('chatInput').disabled = false;
+      $('btnSendChat').disabled = false;
+      $('chatPresenceIndicator').style.display = 'none';
+      $('chatTyping').style.display = 'none';
+
+      connectChatWebSocket();
+    }
+
+    function connectChatWebSocket() {
+      if (!currentConvId || !token) return;
+      if (isConnecting) return;
+      isConnecting = true;
+
+      const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+      ws = new WebSocket(`${proto}://${location.host}/ws/chat/${currentConvId}/?token=${token}`);
+
+      ws.onopen = () => {
+        isConnecting = false;
+        flushMessageQueue();
+      };
+
+      ws.onclose = () => {
+        isConnecting = false;
+        setTimeout(() => {
+          if (currentConvId && (!ws || ws.readyState !== WebSocket.OPEN)) {
+            connectChatWebSocket();
+          }
+        }, 2000);
+      };
+
+      ws.onerror = (e) => {
+        console.error(e);
+      };
+
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.type === 'message') {
+            const isOwn = data.sender === currentUser.username;
+            appendMessage(data, isOwn);
+          } else if (data.type === 'presence') {
+            const indicator = $('chatPresenceIndicator');
+            if (currentUser.role === 'client') {
+              indicator.style.display = data.online ? 'flex' : 'none';
+              indicator.textContent = `${data.username} en ligne`;
+            }
+          } else if (data.type === 'typing') {
+            const indicator = $('chatTyping');
+            if (data.username !== currentUser.username) {
+              indicator.style.display = data.is_typing ? 'block' : 'none';
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+    }
+
+    function appendMessage(msg, isOwn) {
+      const area = $('chatMessages');
+      if (area.querySelector('.empty-state')) area.innerHTML = '';
+
+      const el = document.createElement('div');
+      el.className = `chat-msg ${isOwn ? 'own' : 'theirs'}`;
+      
+      const sender = msg.sender_name || msg.sender;
+      const content = msg.content;
+      const date = msg.created_at ? new Date(msg.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+      el.innerHTML = `
+        <div class="chat-msg-sender">${escapeHtml(sender)}</div>
+        <div>${escapeHtml(content)}</div>
+        <div class="chat-msg-time">${date}</div>
+      `;
+
+      area.appendChild(el);
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function sendChatMessage() {
+      const input = $('chatInput');
+      const content = input.value.trim();
+      if (!content) return;
+
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        messageQueue.push(content);
+        connectChatWebSocket();
+        input.value = '';
+        return;
+      }
+
+      ws.send(JSON.stringify({ type: 'message', content }));
+      input.value = '';
+    }
+
+    function flushMessageQueue() {
+      while (messageQueue.length > 0 && ws && ws.readyState === WebSocket.OPEN) {
+        const msg = messageQueue.shift();
+        try {
+          ws.send(JSON.stringify({ type: 'message', content: msg }));
+        } catch (e) {
+          messageQueue.unshift(msg);
+          break;
+        }
+      }
+    }
+
+    function sendTypingIndicator() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({ type: 'typing', is_typing: true }));
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'typing', is_typing: false }));
+        }
+      }, 1000);
+    }
+
+    $('chatInput').addEventListener('input', (e) => {
+      if (e.target.value.trim()) {
+        sendTypingIndicator();
+      }
+    });
+
+    $('chatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+
+    function escapeHtml(text) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return (text || '').replace(/[&<>"']/g, m => map[m]);
+    }
+  </script>
+</body>
+</html>
