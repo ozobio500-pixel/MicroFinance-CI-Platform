@@ -1413,7 +1413,7 @@
           tbody.innerHTML += `
             <tr>
               <td>${c.id}</td>
-              <td>${escapeHtml(c.client_username || c.client)}</td>
+              <td>${escapeHtml(c.client_detail ? c.client_detail.username : c.client)}</td>
               <td style="font-weight: 600;">${c.amount.toLocaleString()} FCFA</td>
               <td>${c.duration_months} Mois</td>
               <td style="font-weight: bold; color: var(--accent);">${c.eligibility_score || 'N/A'}/100</td>
@@ -1957,8 +1957,9 @@
     });
 
     function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
       const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return (text || '').replace(/[&<>"']/g, m => map[m]);
+      return String(text).replace(/[&<>"']/g, m => map[m]);
     }
   </script>
 </body>

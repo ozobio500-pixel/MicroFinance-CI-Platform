@@ -46,6 +46,14 @@ class CreditApplicationListCreateView(generics.ListCreateAPIView):
             eligibility_score=score,
         )
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        response_serializer = CreditApplicationSerializer(serializer.instance, context={'request': request})
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class CreditApplicationDetailView(generics.RetrieveAPIView):
     serializer_class = CreditApplicationSerializer

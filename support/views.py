@@ -43,6 +43,14 @@ class ConversationListCreateView(generics.ListCreateAPIView):
             conv.status = Conversation.Status.ASSIGNED
             conv.save(update_fields=["assigned_agent", "status"])
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        response_serializer = ConversationSerializer(serializer.instance, context={'request': request})
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class ConversationDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = ConversationSerializer

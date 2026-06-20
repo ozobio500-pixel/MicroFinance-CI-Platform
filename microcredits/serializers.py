@@ -38,7 +38,8 @@ class CreditApplicationSerializer(serializers.ModelSerializer):
 class CreditApplicationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditApplication
-        fields = ("amount", "duration_months")
+        fields = ("id", "amount", "duration_months", "status", "eligibility_score", "created_at")
+        read_only_fields = ("id", "status", "eligibility_score", "created_at")
 
 
 class CreditStatusUpdateSerializer(serializers.Serializer):
